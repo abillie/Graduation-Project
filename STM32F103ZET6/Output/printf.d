@@ -1,0 +1,14 @@
+..\output\printf.o: ..\App\printf\printf.c
+..\output\printf.o: ..\App\printf\printf.h
+..\output\printf.o: ..\Libraries\CMSIS\stm32f10x.h
+..\output\printf.o: ..\Libraries\CMSIS\core_cm3.h
+..\output\printf.o: F:\mdk_keil5_arm\ARM\ARMCC\bin\..\include\stdint.h
+..\output\printf.o: ..\Libraries\CMSIS\system_stm32f10x.h
+..\output\printf.o: ..\User\stm32f10x_conf.h
+..\output\printf.o: ..\Libraries\FWlib\inc\stm32f10x_gpio.h
+..\output\printf.o: ..\Libraries\CMSIS\stm32f10x.h
+..\output\printf.o: ..\Libraries\FWlib\inc\stm32f10x_rcc.h
+..\output\printf.o: ..\Libraries\FWlib\inc\stm32f10x_tim.h
+..\output\printf.o: ..\Libraries\FWlib\inc\stm32f10x_usart.h
+..\output\printf.o: ..\Libraries\FWlib\inc\misc.h
+..\output\printf.o: F:\mdk_keil5_arm\ARM\ARMCC\bin\..\include\stdio.h
