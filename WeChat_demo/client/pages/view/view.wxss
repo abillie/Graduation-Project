@@ -1,0 +1,70 @@
+/* pages/view/view.wxss */
+@import "/wxSearch/wxSearch.wxss";
+page {
+  height: 100%;
+}
+.bus-flag{
+width:150px;
+height:20px;
+margin:5px 0 0 5px;/*位置*/
+}
+.system-flag{
+ width:150px;
+height:20px;
+margin:-20px 0 0 170px; 
+}
+.station-choose{
+ width:80px;
+height:20px;
+margin:-20px 0 0 170px; 
+}
+
+.station-choose-value{
+  font-size: 14px;
+  color:Black;
+  font-weight: bold;
+  padding-left: 10px;
+  border: 1px solid rgb(72, 165, 131);
+  border-radius: 4px;
+  width:50px;
+  height: 30px;
+  margin:-20px 0 0 250px;
+  line-height: 30px;
+}
+.station-searchImage{
+ width:25px;
+ height:25px;
+ margin:-20px 0 0 320px; 
+}
+.bus-info{
+  margin:5px 0 0 5px;/*位置*/
+}
+.station-info-temperature{
+width:150px;
+height:20px;
+margin:0px 0 0 23px;/*位置*/  
+}
+.station-info-humidity{
+width:150px;
+height:20px;
+margin:-20px 0 0 200px;/*位置*/  
+}
+.station-info-pm25{
+width:200px;
+height:20px;
+margin:5px 0 0 5px;/*位置*/  
+}
+.station-info-noise{
+width:150px;
+height:20px;
+margin:-20px 0 0 200px;/*位置*/  
+}
+.picker{
+width:200px;
+height:20px;
+margin:5px 0 0 5px;  
+}
+.page-button{
+  margin-top:20px;
+  line-height: 2;
+}

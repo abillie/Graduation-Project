@@ -1,0 +1,19 @@
+<!--pages/admin/admin.wxml-->
+  <view class="flag">
+  <view class= "bus-flag">{{"公交状态：" + bus_flag}}</view>
+  <view class= "system-flag">{{"系统状态：" + system_flag}}</view>
+  </view>
+<view class="section">
+  <!--<view class="picker"> <view class="section__title">站点选择</view>-->
+<view class= "bus-info">{{"XXX路开往明理楼方向，距离本站还有" + station_number + "站，到达约" + station_time + "分钟。"}}</view>
+<view class="station-info">{{"温度：" + temperature}}</view>
+<view class="station-info-humidity">{{"湿度：" +  humidity}}</view>
+<view class="station-info-pm25">{{"pm2.5：" + pm25}}</view>
+<view class="station-info-noise">{{"噪音：" + noise}}</view>
+</view>
+<view class="page-buttons">
+  <button class="page-button" type="primary" bindtap="openWebSocketConnect">链接并订阅设备</button>
+  <button class="page-button" type="primary" bindtap="CancelSubscription">取消订阅</button>
+  <button class="page-button" type="primary" bindtap="senddata">发送数据</button>
+  <button class="page-button" type="primary" bindtap="closeusr">断开链接</button>
+</view>

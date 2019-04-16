@@ -1,0 +1,43 @@
+/* pages/admin/admin.wxss */
+page {
+  height: 100%;
+}
+.bus-flag{
+width:150px;
+height:20px;
+margin:5px 0 0 5px;/*位置*/
+}
+.system-flag{
+ width:150px;
+height:20px;
+margin:-20px 0 0 170px; 
+}
+.station-info{
+width:150px;
+height:20px;
+margin:5px 0 0 5px;/*位置*/
+}
+.station-info-humidity{
+width:150px;
+height:20px;
+margin:-20px 0 0 150px;/*位置*/  
+}
+.station-info-pm25{
+width:150px;
+height:20px;
+margin:5px 0 0 5px;/*位置*/  
+}
+.station-info-noise{
+width:150px;
+height:20px;
+margin:-20px 0 0 150px;/*位置*/  
+}
+.picker{
+width:150px;
+height:20px;
+margin:5px 0 0 5px;  
+}
+.page-button{
+  margin-top:20px;
+  line-height: 2;
+}

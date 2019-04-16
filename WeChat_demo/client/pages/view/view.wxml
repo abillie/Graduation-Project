@@ -1,0 +1,34 @@
+<!--pages/view/view.wxml-->
+<import src="/wxSearch/wxSearch.wxml"/>
+<view class="wxSearch-section">
+  <view class="wxSearch-pancel">
+    <input bindinput="wxSearchInput" bindfocus="wxSerchFocus" value="{{wxSearchData.value}}"      bindblur="wxSearchBlur" class="wxSearch-input" placeholder="搜索" />
+    <button class="wxSearch-button" bindtap="wxSearchFn" size="mini" plain="true">搜索</button>
+  </view>
+</view>
+
+<template is="wxSearch" data="{{wxSearchData}}"/>
+  <view class="flag">
+  <view class= "bus-flag">{{"公交状态：" + bus_flag_view}}</view>
+  <view class= "system-flag">{{"系统状态：" + system_flag_view}}</view>
+  </view>
+<view class="section">
+  <!--<view class="picker"> <view class="section__title">站点选择</view>-->
+  <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+    <view class="picker">
+      选择站点：{{array[index]}}
+    </view>
+  </picker>
+  <!--<view class="station-choose">搜索站点</view>
+  <input class="station-choose-value" type="text" value="{{index}}" name="longitude" />
+  <image class="station-searchImage" src="/imgs/search.png"></image>-->
+<view class= "bus-info">{{"XX路公交车开往明理楼方向，距离本站还有" + distance + "米，约" + station_time + "分钟后到达。"}}</view>
+<view class="station-info-temperature">{{"气温：" + temperature + " ℃"}}</view>
+<view class="station-info-humidity">{{"湿度：" +  humidity + " %rh"}}</view>
+<view class="station-info-pm25">{{"颗粒物：" + pm25 + " ug/m3"}}</view>
+<view class="station-info-noise">{{"噪音：" + noise + " dB"}}</view>
+<view class="page-buttons">
+  <button class="page-button" type="primary" bindtap="Click">查询</button>
+  <!--<button class="page-button" type="primary" bindtap="test">测试数据</button>-->
+</view>
+</view>

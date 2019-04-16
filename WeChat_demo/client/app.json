@@ -1,0 +1,37 @@
+{
+  "pages": [
+    "pages/view/view",
+    "pages/access/access",
+    "pages/admin/admin",
+    "pages/location/location"
+
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "公交e",
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#8a8a8a",
+    "selectedColor": "#d4237a",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/view/view",
+        "text": "主页",
+        "iconPath": "imgs/cry.png",
+        "selectedIconPath": "imgs/smile.png"
+      },
+      {
+        "pagePath": "pages/access/access",
+        "text": "模拟",
+        "iconPath": "imgs/guiji.png",
+        "selectedIconPath": "imgs/guiji-filling.png"
+      }
+    ]
+  }
+}
