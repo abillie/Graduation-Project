@@ -32,14 +32,14 @@ router.post('/tunnel', controllers.tunnel.post)
 router.get('/message', controllers.message.get)
 // POST 用来处理微信转发过来的客服消息
 router.post('/message', controllers.message.post)
-//demo.js
+//demo.js 测试接口
 router.get('/demo', controllers.demo)
-//location POST 响应模拟公交上传数据的请求
+//location POST 响应小程序POST请求
 router.post('/location',controllers.location.post)
-//location GET 响应小程序获取数据的请求
+//location GET 响应小程序GET请求
 router.get('/location', controllers.location.get)
-//usrcloud POST 响应中转程序上传数据的请求
+//usrcloud POST 响应中转程序上传数据的请求（弃用）
 router.post('/usrcloud', controllers.usrcloud.post)
-//usrcloud GET 响应小程序获取数据的请求
+//usrcloud GET 响应站台GET请求
 router.get('/usrcloud', controllers.usrcloud.get)
 module.exports = router
