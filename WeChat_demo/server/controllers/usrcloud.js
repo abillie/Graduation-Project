@@ -1,9 +1,6 @@
 
-//var Bus_flag = false;        //公交状态
 global.Station_flag = false;  //站台状态
 global.System_flag = false;   //系统状态
-//var Station_number = NaN;   //距离目的地站台数,对于固定站台
-//var Station_time = NaN;    //达到目的地的时间，对于固定至站台
 global.temperature = NaN;    //温度
 global.humidity = NaN;       //湿度值
 global.noise = NaN;          //噪音值

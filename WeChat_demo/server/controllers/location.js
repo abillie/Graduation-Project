@@ -1,67 +1,101 @@
-const node_schedule = require('node-schedule') //定时模块
+//! 定时模块
+const node_schedule = require('node-schedule') 
+//! 方向计算计数，没两次请求计算一次方向
 var j = 0;
-global.bus_flag = false;      //公交站台
-//var station_flag = false;  //站台状态
-//var system_flag = false;   //系统状态
-//var temperature = NaN;        //温度
-//var humidity = NaN;           //湿度值
-//var noise = NaN;              //噪音值
-//var pm25 = NaN;               //pm2.5值 
-var direction = "";               //方向
+//! 公交站台状态标志
+global.bus_flag = false;  
+//! 计算出的方向    
+var direction = "";
+//! 方向计算中间变量               
 var direction_temp = "";
-global.Station_ArrivalStation = NaN;         //还有几个站点到达,对于固定的公交站
-global.Station_ArrivalTime = NaN;             //多少时间后到达，对于固定的公交站
-global.distance_bus_to_station = 0;         //公交车到站台距离
+//! 还有几个站点到达,对于固定的公交站
+global.Station_ArrivalStation = NaN;
+//! 多少时间后到达，对于固定的公交站         
+global.Station_ArrivalTime = NaN;
+//! 公交车到站台距离             
+global.distance_bus_to_station = 0;       
 var distance_bus_to_man = 0;
-var ArrivalStation = NaN;            //还有几个站点到达,对于客户端
-var ArrivalTime = 0;               //多少时间后到达，对于客户端
-var postData_speed = NaN;            //公交速度
-var postData_speed_last = 0;       //上一次公交速度
-var distance_sum = NaN;              //站点距目标站点距离
-var ArrivalTime_temp = NaN;          //计算时间中间量
-var lest = new Array();              //储存距离公交最短的站点数组位置，0，1，2，3
-var station_distance = new Array(4);  //各站点之间的距离
+//! 还有几个站点到达,对于小程序客户端 
+var ArrivalStation = NaN; 
+//! 多少时间后到达，对于小程序客户端           
+var ArrivalTime = 0;
+//! 公交速度               
+var postData_speed = NaN;
+//! 上一次公交速度            
+var postData_speed_last = 0;
+//! 站点距目标站点距离       
+var distance_sum = NaN; 
+//! 计算时间中间量             
+var ArrivalTime_temp = NaN;
+//! 储存距离公交最短的站点数组位置，0，1，2，3          
+var lest = new Array(); 
+//! 各站点之间的距离             
+var station_distance = new Array(4);
+//! 0,1,2,3四个站点距离的中间变量  
 var distance_0 = new Array(2);  
 var distance_1 = new Array(2);
 var distance_2 = new Array(2);
-var distance_3 = new Array(2);     //0,1,2,3四个站点距离的中间变量
-var longitude_temp = new Array();  //计算方向用经度
-var latitude_temp = new Array();   //计算方向用纬度
-var distance = new Array(4);       //实时公交与站台之间的距离
- //响应POST请求
+var distance_3 = new Array(2); 
+//! 计算方向用经度    
+var longitude_temp = new Array();
+//! 计算方向用纬度 
+var latitude_temp = new Array();
+//! 实时公交与站台之间的距离   
+var distance = new Array(4);       
+//********************************************************************//
+//! 函数名:post
+//!响应定位小程序POST请求
+//! 输入:上下文对象ctx
+//! 输出:返回post请求响应结果
+//********************************************************************//
  async function post(ctx, next){
-  let station_longitude = new Array()  //实时经度
-  let station_latitude = new Array()   //实时纬度
+  //! 公交车实时经度	 
+  let station_longitude = new Array()
+  //! 公交车实时纬度  
+  let station_latitude = new Array()
+  
+  //! 明理楼站经纬度; 编号:0  
   station_longitude[0] = 104.18362
-  station_latitude[0] = 30.829752 //明理楼 0
+  station_latitude[0] = 30.829752 
+  //! 公交实时定位点到明理楼站的直线距离
   distance[0] = ""
-  station_distance[0] = 308.499;  //01距离
+  //! 明理楼站到香城学府站距离,01距离;
+  station_distance[0] = 308.499;  
 
+  //! 香城学府站经纬度; 编号:1
   station_longitude[1] = 104.182945
-  station_latitude[1] = 30.827042  //香城学府 1
+  station_latitude[1] = 30.827042
+  //! 公交实时定位点到香城学府站的直线距离  
   distance[1] = ""
-  station_distance[1] = 208.7464;  //12距离
+  //! 香城学府站到院士林站距离,12距离;
+  station_distance[1] = 208.7464;  
 
-  station_longitude[2] = 104.18511  //院士林  2
-  station_latitude[2] = 30.826797   
+  //! 院士林站; 编号:2
+  station_longitude[2] = 104.18511  
+  station_latitude[2] = 30.826797  
+  //! 公交实时定位点到院士林站的直线距离  
   distance[2] = ""
-  station_distance[2] = 261.0112;   //23距离
+  //! 院士林站到艺术楼站的距离,23距离;
+  station_distance[2] = 261.0112;   
 
-  station_longitude[3] = 104.18589  //艺术楼 3
+  //! 艺术楼楼站; 编号:3
+  station_longitude[3] = 104.18589  
   station_latitude[3] = 30.829044
- // station_longitude[3] = 104.185646
- // station_latitude[3] = 30.82834   //艺术楼
+  //! 公交实时定位点到艺术楼站的直线距离
   distance[3] = ""
-  station_distance[3] = 230.8587;    //30距离
+  //! 艺术楼到明理楼站距离; 30距离;
+  station_distance[3] = 230.8587;    
 
+  //! 艺术楼到明理楼之间的一个直角拐角，降低误差用
   station_longitude[4] = 104.18589
-  station_latitude[4] = 30.829044    //拐角
-  //distance[4] = ""
+  station_latitude[4] = 30.829044    
+
+  //! 字符串转数字
   let postData_longitude = Number(ctx.request.body.longitude);
   let postData_latitude = Number(ctx.request.body.latitude);
   postData_speed = Number(ctx.request.body.speed);
   bus_flag = ctx.request.body.busflag;
-  //速度容错处理，计算一段时间内的速度平均值
+  //! 速度容错处理，计算一段时间内的速度平均值
   if (postData_speed != -1){
     if (postData_speed_last == 0){
       postData_speed_last = postData_speed;
@@ -69,10 +103,11 @@ var distance = new Array(4);       //实时公交与站台之间的距离
       postData_speed_last = (postData_speed + postData_speed_last) / 2;
     }            
   }
-  //方向容错处理，保留上一次有效方向
+  //! 方向容错处理，保留上一次有效方向
   if (direction != ""){
     direction_temp = direction;
   }
+  //! 计算并储存实时定位点到四个站点间的距离
   for (let i=0;i<4;i++)
   {
     let radLat1 = station_latitude[i] * Math.PI / 180.0;
@@ -83,7 +118,7 @@ var distance = new Array(4);       //实时公交与站台之间的距离
     s = s * 6378137;
     distance[i] = Math.round(s * 10000) / 10000;  //单位：米
   }
-     //取公交车到各站点距离最小值的数组位置
+  //! 取公交车到各站点距离最小值的数组位置
   function DistanceOfSmallest(a) {
      let lowest = 0;
      for (let n = 1; n < a.length; n++) {
@@ -95,7 +130,8 @@ var distance = new Array(4);       //实时公交与站台之间的距离
    longitude_temp[j] = Number(ctx.request.body.longitude);
    latitude_temp[j] = Number(ctx.request.body.latitude);
    lest[j] = DistanceOfSmallest(distance);
-   distance_0[j] = distance[0];  //第j次公交距0，1，2，3站点的距离值。
+   //! 第j次公交距0，1，2，3站点的距离值。
+   distance_0[j] = distance[0];  
    distance_1[j] = distance[1];
    distance_2[j] = distance[2];
    distance_3[j] = distance[3];
