@@ -107,9 +107,10 @@ var distance = new Array(4);
   if (direction != ""){
     direction_temp = direction;
   }
-  //! 计算并储存实时定位点到四个站点间的距离
+  //! 计算并储存实时公交定位点到四个站点间的距离
   for (let i=0;i<4;i++)
   {
+	//! 经纬度角度值转换为弧度值  
     let radLat1 = station_latitude[i] * Math.PI / 180.0;
     let radLat2 = postData_latitude * Math.PI / 180.0;
     let a = radLat1 - radLat2;
@@ -118,7 +119,7 @@ var distance = new Array(4);
     s = s * 6378137;
     distance[i] = Math.round(s * 10000) / 10000;  //单位：米
   }
-  //! 取公交车到各站点距离最小值的数组位置
+  //! 取公交车定位点到各站点距离最小值的数组位置
   function DistanceOfSmallest(a) {
      let lowest = 0;
      for (let n = 1; n < a.length; n++) {
@@ -126,77 +127,88 @@ var distance = new Array(4);
      }
      return lowest;
    };
-   ///if(j != 2){}  //后续增加采样点时间间隔用
+   //! if(j != 2){}  //后续增加采样点时间间隔用
    longitude_temp[j] = Number(ctx.request.body.longitude);
    latitude_temp[j] = Number(ctx.request.body.latitude);
+   //! 取公交定位点到四个站点距离数组中最短距离的数组下标
    lest[j] = DistanceOfSmallest(distance);
    //! 第j次公交距0，1，2，3站点的距离值。
    distance_0[j] = distance[0];  
    distance_1[j] = distance[1];
    distance_2[j] = distance[2];
    distance_3[j] = distance[3];
+   //! 储存两次定位小程序上传的定位数据
    j++;
    if(j==2){
     j=0;
     let long_temp = Math.abs(longitude_temp[1] - longitude_temp[0]);
     let lati_temp = Math.abs(latitude_temp[1] - latitude_temp[0]);
+	//! 如果两次公交定位点到四个站点最小距离都是同一个站点
     if(lest[0]==lest[1]){
       switch (lest[0]) {
+		//! 如果两次距离最近的点都是明理楼站，编号0  
         case 0:
-          //if ((distance_0[0] < distance_0[1]) && (long_temp > lati_temp))   //远离0点,方向0~3
+		  //! 本是为线路反方向行驶时计算方向使用的，但是测试只有一个方向，所以蔽掉
+          //if ((distance_0[0] < distance_0[1]) && (long_temp > lati_temp))  //远离0点,方向0~3
            // direction = "03";
-          if ((distance_0[0] < distance_0[1]) && (long_temp < lati_temp))   //远离0点，方向0~1
+          if ((distance_0[0] < distance_0[1]) && (long_temp < lati_temp))    //远离0点，方向0~1
             direction = "01";
-          //if ((distance_0[0] > distance_0[1]) && (long_temp < lati_temp))   //靠近0点，方向1~0
+          //if ((distance_0[0] > distance_0[1]) && (long_temp < lati_temp))  //靠近0点，方向1~0
            // direction = "10";
-          if ((distance_0[0] > distance_0[1]) && (long_temp > lati_temp))   //靠近0点，方向3~0
+          if ((distance_0[0] > distance_0[1]) && (long_temp > lati_temp))    //靠近0点，方向3~0
             direction = "30";
-          if (distance_0[0] == distance_0[1])                               //距离0点最近并且保持不动
+		  //! 两次距离相同则定位点停止运动（此处有bug，因为定位数据是浮点数，距离相同很难，可能两次GPS定位的同一点定位数据不同）	
+          if (distance_0[0] == distance_0[1])                                //距离0点最近并且保持不动
             direction = "00";
           break;
+		//! 如果两次距离最近的点都是香城学府站，编号1  
         case 1:
           if ((distance_1[0] < distance_1[1]) && (long_temp > lati_temp))    //远离1点,方向1~2
             direction = "12";
-          //if ((distance_1[0] < distance_1[1]) && (long_temp < lati_temp))    //远离1点，方向1~0
+          //if ((distance_1[0] < distance_1[1]) && (long_temp < lati_temp))  //远离1点，方向1~0
            // direction = "10";
           if ((distance_1[0] > distance_1[1]) && (long_temp < lati_temp))    //靠近1点，方向0~1
             direction = "01";
-          //if ((distance_1[0] > distance_1[1]) && (long_temp > lati_temp))    //靠近1点，方向2~1
+          //if ((distance_1[0] > distance_1[1]) && (long_temp > lati_temp))  //靠近1点，方向2~1
             //direction = "21";
           if (distance_1[0] == distance_1[1])                                //距离1点最近并且保持不动
             direction = "11";
           break;
+		//! 如果两次距离最近的点都是院士林站，编号2    
         case 2:
-         // if ((distance_2[0] < distance_2[1]) && (long_temp > lati_temp))    //远离2点,方向2~1
+         // if ((distance_2[0] < distance_2[1]) && (long_temp > lati_temp))  //远离2点,方向2~1
             //direction = "21";
           if ((distance_2[0] < distance_2[1]) && (long_temp < lati_temp))    //远离2点，方向2~3
             direction = "23";
-         // if ((distance_2[0] > distance_2[1]) && (long_temp < lati_temp))    //靠近2点，方向3~2
+         // if ((distance_2[0] > distance_2[1]) && (long_temp < lati_temp))  //靠近2点，方向3~2
            // direction = "32";
           if ((distance_2[0] > distance_2[1]) && (long_temp > lati_temp))    //靠近2点，方向1~2
             direction = "12";
           if (distance_2[0] == distance_2[1])                                //距离2点最近并且保持不动
             direction = "22";
           break;
+		//! 如果两次距离最近的点都是艺术楼站，编号3    
         case 3:
           if ((distance_3[0] < distance_3[1]) && (long_temp > lati_temp))    //远离3点,方向3~0
             direction = "30";
-         // if ((distance_3[0] < distance_3[1]) && (long_temp < lati_temp))    //远离3点，方向3~2
+         // if ((distance_3[0] < distance_3[1]) && (long_temp < lati_temp))  //远离3点，方向3~2
             //direction = "32";
           if ((distance_3[0] > distance_3[1]) && (long_temp < lati_temp))    //靠近3点，方向2~3
             direction = "23";
-         // if ((distance_3[0] > distance_3[1]) && (long_temp > lati_temp))    //靠近3点，方向0~3
+         // if ((distance_3[0] > distance_3[1]) && (long_temp > lati_temp))  //靠近3点，方向0~3
             //direction = "03";
           if (distance_3[0] == distance_3[1])                                //距离3点最近并且保持不动
             direction = "33";
           break;
+		  //! 错误，保持前一次正确方向结果
         default:
           direction = direction_temp; //保持上一次的有效方向
           break;
       }
-      //到达两个站点之间的临界点，两次最小距离的站点不同，则公交车远离第一个站，靠近第二个站
-      //现阶段仅实现逆时针方向的判断
-    } else{  
+    //! 到达两个站点之间的中点，两次最小距离的站点不同，则公交车远离第一个站，靠近第二个站
+    //! 现阶段仅实现逆时针方向的判断
+    } else{
+	  //! 靠近距离公交定位点倒数第二短的站	
       switch(lest[1]){
          case 0: 
           direction = "30"
@@ -209,16 +221,16 @@ var distance = new Array(4);
           break;
          case 3:
           direction = "23"
-          //direction = lest.toString();
           break;
         default:
+		  //! 错误，保持前一次正确方向结果
           direction = direction_temp; //保持上一次的有效方向
           break;  
       }
     }
    }
-   //计算到达固定站台（明理楼）的到达时间和剩余站点数
-   //公交位于01之间时
+   //! 计算到达固定站台（明理楼）的到达时间和剩余站点数
+   //! 公交位于01之间时
    if (direction == "01" && postData_speed != NaN) {
      Station_ArrivalStation = 3;
      if (postData_speed != -1) {
@@ -227,10 +239,11 @@ var distance = new Array(4);
        ArrivalTime_temp = distance_sum / postData_speed;
        Station_ArrivalTime = Math.ceil(ArrivalTime_temp / 60);
      } else {
-       Station_ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));   //使用上一次有数据的速度计算，不至于没有值返回。
+	   //! 使用上一次有数据的速度计算，不至于没有值返回。 
+       Station_ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));   
      }
    };
-   //公交位于12之间时
+   //! 公交位于12之间时
    if (direction == "12" && postData_speed != NaN) {
      Station_ArrivalStation = 2;
      if (postData_speed != -1) {
@@ -242,7 +255,7 @@ var distance = new Array(4);
        Station_ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
      }
    };
-   //公交位于23之间时
+   //! 公交位于23之间时
    if (direction == "23" && postData_speed != NaN) {
      Station_ArrivalStation = 1;
      if (postData_speed != -1) {
@@ -254,7 +267,7 @@ var distance = new Array(4);
        Station_ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
      }
    };
-   //公交位于30之间时
+   //! 公交位于30之间时
    if (direction == "30" && postData_speed != NaN) {
      Station_ArrivalStation = 1;
      if (postData_speed != -1) {
@@ -266,6 +279,7 @@ var distance = new Array(4);
        Station_ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
      }
    };
+  //! 打印post上传的数据日志记录
   console.log("--------------------post---------------------");   
   console.log("j:"+j);
   console.log("longitude_temp:" + longitude_temp);
@@ -274,22 +288,30 @@ var distance = new Array(4);
   console.log("postData_latitude:"+postData_latitude);
   console.log("postData_speed:" + postData_speed);
   console.log("ctx.request.body"+ctx.request.body);
+  //! 返回距离（客户端未使用，仅做测试）
   ctx.body = distance;
   console.log("direction:" + direction);
   console.log("(ctx.body:"+ctx.body);
   console.log("--------------------post---------------------");
 }
-//响应GET请求
+//********************************************************************//
+//! 函数名:post
+//! 响应主界面小程序get请求
+//! 输入:上下文对象ctx
+//! 输出:返回post请求响应结果
+//********************************************************************//
 async function get(ctx, next){
+  //! 读取主界面小程序get请求的站点编号参数	
   let station_temp = Number(ctx.query.station);
+  //! 记录get请求日志
   console.log("------------------------get-------------------");
   console.log("station_temp:"+station_temp);
   console.log("direction:" + direction);
   console.log("postData_speed:" + postData_speed);
   switch (station_temp){
-      //客户端选择站点0（明理楼）
+      //! 客户端选择站点0（明理楼）
       case 0:
-      //公交位于01之间时
+      //! 公交位于01之间时,并且公交车速度不为0
       if (direction == "01" && postData_speed != NaN){  
         ArrivalStation = 3;
         if (postData_speed != -1){
@@ -301,7 +323,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum/(postData_speed_last*60));
           }
         };
-        //公交位于12之间时
+      //! 公交位于12之间时
       if (direction=="12" && postData_speed != NaN) {     
         ArrivalStation = 2;
         if (postData_speed != -1) {
@@ -313,7 +335,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum/(postData_speed_last * 60));
           }
         };
-      //公交位于23之间时
+      //! 公交位于23之间时
       if (direction=="23" && postData_speed!=NaN) {
         ArrivalStation = 1;
         if (postData_speed != -1) {
@@ -325,7 +347,7 @@ async function get(ctx, next){
           ArrivalTime = Math.ceil(distance_sum/(postData_speed_last * 60));
         }
       };
-      //公交位于30之间时
+      //! 公交位于30之间时
       if (direction=="30" && postData_speed != NaN) {
         ArrivalStation = 1;
         if (postData_speed != -1) {
@@ -338,9 +360,9 @@ async function get(ctx, next){
         }
       };
         break;
-       //客户端选择1站点（香城学府）
+      //! 客户端选择1站点（香城学府）
       case 1:
-        //公交位于01之间时
+        //! 公交位于01之间时
         if (direction == "01" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -352,7 +374,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于12之间时
+        //! 公交位于12之间时
         if (direction == "12" && postData_speed != NaN) {
           ArrivalStation = 3;
           if (postData_speed != -1) {
@@ -364,7 +386,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于23之间时
+        //! 公交位于23之间时
         if (direction == "23" && postData_speed != NaN) {
           ArrivalStation = 2;
           if (postData_speed != -1) {
@@ -376,7 +398,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于30之间时
+        //! 公交位于30之间时
         if (direction == "30" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -389,9 +411,9 @@ async function get(ctx, next){
           }
         };
         break; 
-        //客户端选择2站点（院士林）
+        //! 客户端选择2站点（院士林）
       case 2:
-        //公交位于01之间时
+        //! 公交位于01之间时
         if (direction == "01" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -403,7 +425,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于12之间时
+        //! 公交位于12之间时
         if (direction == "12" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -415,7 +437,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于23之间时
+        //! 公交位于23之间时
         if (direction == "23" && postData_speed != NaN) {
           ArrivalStation = 3;
           if (postData_speed != -1) {
@@ -427,7 +449,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于30之间时
+        //! 公交位于30之间时
         if (direction == "30" && postData_speed != NaN) {
           ArrivalStation = 2;
           if (postData_speed != -1) {
@@ -440,9 +462,9 @@ async function get(ctx, next){
           }
         };
         break;
-        //客户端选择站点3（艺术楼）
+        //! 客户端选择站点3（艺术楼）
       case 3:
-        //公交位于01之间时
+        //! 公交位于01之间时
         if (direction == "01" && postData_speed != NaN) {
           ArrivalStation = 2;
           if (postData_speed != -1) {
@@ -454,7 +476,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于12之间时
+        //! 公交位于12之间时
         if (direction == "12" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -466,7 +488,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于23之间时
+        //! 公交位于23之间时
         if (direction == "23" && postData_speed != NaN) {
           ArrivalStation = 1;
           if (postData_speed != -1) {
@@ -478,7 +500,7 @@ async function get(ctx, next){
             ArrivalTime = Math.ceil(distance_sum / (postData_speed_last * 60));
           }
         };
-        //公交位于30之间时
+        //! 公交位于30之间时
         if (direction == "30" && postData_speed != NaN) {
           ArrivalStation = 3;
           if (postData_speed != -1) {
@@ -492,8 +514,10 @@ async function get(ctx, next){
         };
         break;  
   }
+  //! 记录get请求响应日志
   console.log(" ArrivalStation：" + ArrivalStation + " ArrivalTime：" + ArrivalTime);
   console.log(" distance_sum：" + distance_sum + " ArrivalTime_temp：" + ArrivalTime_temp);
+   //! 服务器返回主界面小程序get请求的响应数据
    var body = new Object()
    body.BusFlag = bus_flag;
    body.StationFlag = Station_flag;
@@ -507,6 +531,7 @@ async function get(ctx, next){
    body.StationNoise = noise;
    body.StationPm25 = pm25;
    console.log(body);
+   //! 转换为JSON
    ctx.body = JSON.stringify(body);
   console.log("------------------------get-------------------");
 }
